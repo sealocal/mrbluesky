@@ -1,6 +1,14 @@
 class LocationsController < ApplicationController
   before_action :set_location, only: %i[ show edit update destroy ]
 
+  def search
+    @location = Location.find_or_create_by!(query: location_params[:query])
+    unless @location.results
+        @location.results = MapsClient.geocode(q: location_params[:query])
+    end
+    redirect_to @location
+  end
+
   # GET /locations or /locations.json
   def index
     @locations = Location.all
@@ -65,6 +73,6 @@ class LocationsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def location_params
-      params.require(:location).permit(:query, :results)
+      params.require(:location).permit(:query)
     end
 end
