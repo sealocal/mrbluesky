@@ -7,6 +7,7 @@
     * environment file (e.g., a `.env` at the root)
         * WEATHER_CLIENT_JWT
         * MAPS_CLIENT_JWT
+        * MRBLUESKY_DATABASE_PASSWORD (in production mode)
 
 ### Configuration
 
