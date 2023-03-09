@@ -44,18 +44,18 @@
 
 <% result = @location.results[0] %>
 <% if result && result["coordinate"] %>
-    <script
-        src="https://cdn.apple-mapkit.com/mk/5.x.x/mapkit.core.js"
-        crossorigin defer
-        data-libraries="map"
-    ></script>
     <script type="module">
         const setupMapKitJs = async() => {
             if (!window.mapkit || window.mapkit.loadedLibraries.length === 0) {
                 // mapkit.core.js or the libraries are not loaded yet.
                 // Set up the callback and wait for it to be called.
-                await new Promise(resolve => { window.initMapKit = resolve });
-
+                await new Promise(resolve => {
+                    const element = document.createElement("script");
+                    element.addEventListener("load", resolve, { once : true });
+                    element.src = "https://cdn.apple-mapkit.com/mk/5.x.x/mapkit.js"
+                    element.crossOrigin = "anonymous";
+                    document.head.appendChild(element);
+                });
                 // Clean up
                 delete window.initMapKit;
             }
