@@ -7,7 +7,11 @@
     * environment file (e.g., a `.env` at the root)
         * WEATHER_CLIENT_JWT
         * MAPS_CLIENT_JWT
-        * MRBLUESKY_DATABASE_PASSWORD (in production mode)
+        * MRBLUESKY_DATABASE_URL (in production mode)
+        * WEATHER_KIT_JWT_TEAM_ID
+        * WEATHER_KIT_JWT_KEY_ID
+        * WEATHER_KIT_SERVICE_ID
+        * WEATHER_KIT_KEY_PATH
 
 ### Configuration
 
@@ -15,7 +19,11 @@ Add a `.env` file in the root of the repo.
 
 ```
 WEATHER_CLIENT_JWT=token
-MAPS_CLIENT_JWT=token
+MRBLUESKY_DATABASE_URL=postgres://
+WEATHER_KIT_JWT_TEAM_ID=team_id
+WEATHER_KIT_JWT_KEY_ID=key_id
+WEATHER_KIT_SERVICE_ID=service_id
+WEATHER_KIT_KEY_PATH=/path/to/AuthKey_${team_id}.p8
 ```
 
 ### System Dependencies and Development
