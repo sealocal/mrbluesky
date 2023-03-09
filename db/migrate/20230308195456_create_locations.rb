@@ -3,6 +3,8 @@ class CreateLocations < ActiveRecord::Migration[7.0]
     create_table :locations do |t|
       t.string :query
       t.json :results
+      t.json :weather
+      t.timestamp :weather_expires_at
 
       t.timestamps
     end

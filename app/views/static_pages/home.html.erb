@@ -1,3 +1,12 @@
 <h1>Mr Bluesky</h1>
-<p>Find blue skies in your future!</p>
-<%= link_to "Try me", locations_search_path %>
+
+<h2>Find blue skies in your future!</h2>
+
+<p>Try me!</p>
+<%= form_for(Location.new, url: search_locations_url) do |f| %>
+  <%= f.search_field(:query, placeholder: "Cupertino, CA", required: true) %>
+  <%= f.submit "Get Weather Forecast!" %>
+<% end %>
+
+<br />
+<i>Enter a city/state, address, zip, etc.<i>

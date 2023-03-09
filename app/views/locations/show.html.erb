@@ -1,10 +1,92 @@
 <p style="color: green"><%= notice %></p>
 
-<%= render @location %>
+<h1>Location</h1>
 
-<div>
-  <%= link_to "Edit this location", edit_location_path(@location) %> |
-  <%= link_to "Back to locations", locations_path %>
+<p>Your Location Query (address, zip, city, etc.): <strong><%= @location.query %></strong></p>
 
-  <%= button_to "Destroy this location", @location, method: :delete %>
+<div id="weather" style="display: inline-block; float: left;">
+    <h2>Current Weather</h2>
+    <%# If record updated timestamp is more than 2 minutes in the past, then show a message %>
+    <% if @location.updated_at < 2.minutes.ago %>
+        <p><small>last updated <%= @location.updated_at %></small></p>
+    <% end %>
+
+    <% current_weather = @location.weather && @location.weather["currentWeather"] %>
+    <% if current_weather %>
+        Condition: <%= current_weather["conditionCode"] %>
+        <p>Temp: <%= current_weather["temperature"].round %> (in deg Celsius)</p>
+        <p>Humidity: <%= (current_weather["humidity"] * 100).round %> %</p>
+        <p>Wind Speed: <%= current_weather["windSpeed"].round %> km/h</p>
+    <% else %>
+        <p>There was a problem fetching current weather conditions.</p>
+    <% end %>
+
+    <h2>Daily Forecast</h2>
+
+    <table>
+        <th>Date</th><th>hi (C)</th><th>low (C)</th><th>conditions</th>
+        <% daily_weather = @location.weather && @location.weather["forecastDaily"] %>
+        <% daily_weather["days"].each do |day| %>
+            <tr>
+                <td><%= Time.parse(day["forecastStart"]).strftime("%m/%d") %></td>
+                <td><%= day["temperatureMax"].round %></td>
+                <td><%= day["temperatureMin"].round %></td>
+                <%# TODO: Display an icon for the conditionCode (inferred from the WeatherCondition) %>
+                <td><%= day["daytimeForecast"]["conditionCode"] %></td>
+            </tr>
+        <% end %>
+    </table>
 </div>
+
+<br />
+
+<div id="map" style="display: inline-block"></div>
+
+<% result = @location.results[0] %>
+<% if result && result["coordinate"] %>
+    <script
+        src="https://cdn.apple-mapkit.com/mk/5.x.x/mapkit.core.js"
+        crossorigin async
+        data-callback="initMapKit"
+        data-libraries="map"
+    ></script>
+    <script type="module">
+        const setupMapKitJs = async() => {
+            if (!window.mapkit || window.mapkit.loadedLibraries.length === 0) {
+                // mapkit.core.js or the libraries are not loaded yet.
+                // Set up the callback and wait for it to be called.
+                await new Promise(resolve => { window.initMapKit = resolve });
+
+                // Clean up
+                delete window.initMapKit;
+            }
+
+            <%# TODO: Implement refreshing of JWT token on server-side for improved security. :sweat_smile: %>
+            const tokenID = "<%= ENV["MAPS_CLIENT_JWT"] %>";
+            mapkit.init({
+                authorizationCallback: function(done) {
+                    done(tokenID);
+                }
+            });
+
+        };
+
+        /**
+         * Script Entry Point
+         */
+        const main = async() => {
+            await setupMapKitJs();
+
+            const location = new mapkit.CoordinateRegion(
+                new mapkit.Coordinate(<%= result["coordinate"]["latitude"] %>, <%= result["coordinate"]["longitude"] %>),
+                new mapkit.CoordinateSpan(0.167647972, 0.354985255)
+            );
+
+            // Create a map in the element whose ID is "map"
+            const map = new mapkit.Map("map");
+            map.region = location;
+        };
+
+        main();
+    </script>
+<% end %>

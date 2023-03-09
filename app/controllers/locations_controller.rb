@@ -3,9 +3,12 @@ class LocationsController < ApplicationController
 
   def search
     @location = Location.find_or_create_by!(query: location_params[:query])
+
+    # Geocode the address query and cache the results.
     unless @location.results
-        @location.results = MapsClient.geocode(q: location_params[:query])
+      @location.update results: geocode_query["results"]
     end
+
     redirect_to @location
   end
 
@@ -16,6 +19,15 @@ class LocationsController < ApplicationController
 
   # GET /locations/1 or /locations/1.json
   def show
+    # Attempt to fetch weather for the Location if weather data is expired and coordindates are known
+    if @location.weather_expired? && coordinate_present?(@location)
+      # Fetch weather with coordindates.
+      weather = WeatherClient.current_weather(
+        latitude: coordinate["latitude"],
+        longitude: coordinate["longitude"]
+      )
+      @location.update weather: weather
+    end
   end
 
   # GET /locations/new
@@ -74,5 +86,20 @@ class LocationsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def location_params
       params.require(:location).permit(:query)
+    end
+
+    def geocode_query
+      response = MapsClient.geocode(location_params[:query])
+      response.parsed_response
+    end
+
+    # Use coordinates of first result first result for simplicity.
+    def coordinate_present?(location)
+      location && location.results && location.results[0] && location.results[0]["coordinate"]
+    end
+
+    def coordinate
+      return nil unless coordinate_present?(@location)
+      @location.results[0]["coordinate"]
     end
 end

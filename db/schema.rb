@@ -17,6 +17,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_08_195456) do
   create_table "locations", force: :cascade do |t|
     t.string "query"
     t.json "results"
+    t.json "weather"
+    t.datetime "weather_expires_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
