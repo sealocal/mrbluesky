@@ -46,8 +46,7 @@
 <% if result && result["coordinate"] %>
     <script
         src="https://cdn.apple-mapkit.com/mk/5.x.x/mapkit.core.js"
-        crossorigin async
-        data-callback="initMapKit"
+        crossorigin defer
         data-libraries="map"
     ></script>
     <script type="module">
