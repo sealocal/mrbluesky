@@ -44,6 +44,15 @@ docked rails db:migrate
 docked rials server
 ```
 
+### Tests
+
+Run the (limited) tests.
+
+```
+docked rails bundle exec rake test
+docked rails bundle exec rake test:system # requires Chrome binary
+```
+
 ### NOTE
 
 In lieu of docker, the app can of course be run with the app depencies run on the host machine (YMMV).

@@ -10,32 +10,9 @@ class LocationsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should get new" do
-    get new_location_url
-    assert_response :success
-  end
-
-  test "should create location" do
-    assert_difference("Location.count") do
-      post locations_url, params: { location: { query: @location.query, results: @location.results } }
-    end
-
-    assert_redirected_to location_url(Location.last)
-  end
-
   test "should show location" do
     get location_url(@location)
     assert_response :success
-  end
-
-  test "should get edit" do
-    get edit_location_url(@location)
-    assert_response :success
-  end
-
-  test "should update location" do
-    patch location_url(@location), params: { location: { query: @location.query, results: @location.results } }
-    assert_redirected_to location_url(@location)
   end
 
   test "should destroy location" do

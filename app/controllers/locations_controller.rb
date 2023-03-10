@@ -32,30 +32,6 @@ class LocationsController < ApplicationController
     end
   end
 
-  # GET /locations/new
-  def new
-    @location = Location.new
-  end
-
-  # GET /locations/1/edit
-  def edit
-  end
-
-  # POST /locations or /locations.json
-  def create
-    @location = Location.new(location_params)
-
-    respond_to do |format|
-      if @location.save
-        format.html { redirect_to location_url(@location), notice: "Location was successfully created." }
-        format.json { render :show, status: :created, location: @location }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @location.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
   # PATCH/PUT /locations/1 or /locations/1.json
   def update
     respond_to do |format|

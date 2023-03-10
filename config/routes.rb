@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  resources :locations do
+  resources :locations, only: [:index, :show, :update, :destroy] do
     collection do
       post 'search'
     end
