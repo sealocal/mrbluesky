@@ -26,14 +26,18 @@
     <table>
         <th>Date</th><th>hi (C)</th><th>low (C)</th><th>conditions</th>
         <% daily_weather = @location.weather && @location.weather["forecastDaily"] %>
-        <% daily_weather["days"].each do |day| %>
-            <tr>
-                <td><%= Time.parse(day["forecastStart"]).strftime("%m/%d") %></td>
-                <td><%= day["temperatureMax"].round %></td>
-                <td><%= day["temperatureMin"].round %></td>
-                <%# TODO: Display an icon for the conditionCode (inferred from the WeatherCondition) %>
-                <td><%= day["daytimeForecast"]["conditionCode"] %></td>
-            </tr>
+        <% if current_weather %>
+            <% daily_weather["days"].each do |day| %>
+                <tr>
+                    <td><%= Time.parse(day["forecastStart"]).strftime("%m/%d") %></td>
+                    <td><%= day["temperatureMax"].round %></td>
+                    <td><%= day["temperatureMin"].round %></td>
+                    <%# TODO: Display an icon for the conditionCode (inferred from the WeatherCondition) %>
+                    <td><%= day["daytimeForecast"]["conditionCode"] %></td>
+                </tr>
+            <% end %>
+        <% else %>
+            <p>There was a problem fetching the daily forecast.</p>
         <% end %>
     </table>
 </div>
@@ -42,7 +46,7 @@
 
 <div id="map" style="display: inline-block"></div>
 
-<% result = @location.results[0] %>
+<% result = @location.results.try(:first) %>
 <% if result && result["coordinate"] %>
     <script type="module">
         const setupMapKitJs = async() => {
