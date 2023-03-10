@@ -1,10 +1,12 @@
+require "weather_kit"
+
 # Usage:
 #
 # response = MapsClient.geocode("Seattle")
 # puts response.body, response.code, response.message, response.headers.inspect
 class MapsClient
   include HTTParty
-  MAPS_CLIENT_JWT = ENV["MAPS_CLIENT_JWT"]
+  MAPS_CLIENT_JWT = WeatherKit::JWT.call
   base_uri 'https://maps-api.apple.com/v1'
 
   def options

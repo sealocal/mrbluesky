@@ -1,10 +1,12 @@
+require "weather_kit"
+
 # Usage:
 #
 # response = WeatherClient.current_weather("Seattle, WA")
 # puts response.body, response.code, response.message, response.headers.inspect
 class WeatherClient
   include HTTParty
-  WEATHER_CLIENT_JWT = ENV["WEATHER_CLIENT_JWT"]
+  WEATHER_CLIENT_JWT = WeatherKit::JWT.call
   LANGUAGE = "en"
   TIMEZONE = "America/Los_Angeles"
   base_uri 'https://weatherkit.apple.com/api/v1'
