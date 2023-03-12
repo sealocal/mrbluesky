@@ -6,7 +6,6 @@ require "weather_kit"
 # puts response.body, response.code, response.message, response.headers.inspect
 class MapsClient
   include HTTParty
-  MAPS_CLIENT_JWT = WeatherKit::JWT.call
   base_uri 'https://maps-api.apple.com/v1'
 
   def options
@@ -37,7 +36,7 @@ class MapsClient
   private
     def access_token
       @access_token ||= begin
-        response = self.class.get("/token", { headers: { "Authorization" => "Bearer #{MAPS_CLIENT_JWT}" }, debug_output: $stdout })
+        response = self.class.get("/token", { headers: { "Authorization" => "Bearer #{WeatherKit::JWT.call}" }, debug_output: $stdout })
         response.parsed_response["accessToken"]
       rescue
         STDOUT.puts "Failed to get token for MapsClient."

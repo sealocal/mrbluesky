@@ -6,7 +6,6 @@ require "weather_kit"
 # puts response.body, response.code, response.message, response.headers.inspect
 class WeatherClient
   include HTTParty
-  WEATHER_CLIENT_JWT = WeatherKit::JWT.call
   LANGUAGE = "en"
   TIMEZONE = "America/Los_Angeles"
   base_uri 'https://weatherkit.apple.com/api/v1'
@@ -40,7 +39,7 @@ class WeatherClient
         # (Required) The name of the timezone to use for rolling up weather forecasts into daily forecasts.
         timezone: TIMEZONE,
       },
-      headers: { "Authorization" => "Bearer #{WEATHER_CLIENT_JWT}" },
+      headers: { "Authorization" => "Bearer #{WeatherKit::JWT.call}" },
       debug_output: $stdout
     }
   end
