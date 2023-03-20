@@ -48,47 +48,21 @@
 
 <% result = @location.results.try(:first) %>
 <% if result && result["coordinate"] %>
-    <script type="module">
-        const setupMapKitJs = async() => {
-            if (!window.mapkit || window.mapkit.loadedLibraries.length === 0) {
-                // mapkit.core.js or the libraries are not loaded yet.
-                // Set up the callback and wait for it to be called.
-                await new Promise(resolve => {
-                    const element = document.createElement("script");
-                    element.addEventListener("load", resolve, { once : true });
-                    element.src = "https://cdn.apple-mapkit.com/mk/5.x.x/mapkit.js"
-                    element.crossOrigin = "anonymous";
-                    document.head.appendChild(element);
-                });
-                // Clean up
-                delete window.initMapKit;
+    <script>
+        const tokenID = "<%= WeatherKit::JWT.call %>";
+        mapkit.init({
+            authorizationCallback: function(done) {
+                done(tokenID);
             }
+        });
 
-            const tokenID = "<%= WeatherKit::JWT.call %>";
-            mapkit.init({
-                authorizationCallback: function(done) {
-                    done(tokenID);
-                }
-            });
+        const region = new mapkit.CoordinateRegion(
+            new mapkit.Coordinate(<%= result["coordinate"]["latitude"] %>, <%= result["coordinate"]["longitude"] %>),
+            new mapkit.CoordinateSpan(0.167647972, 0.354985255)
+        );
 
-        };
-
-        /**
-         * Script Entry Point
-         */
-        const main = async() => {
-            await setupMapKitJs();
-
-            const location = new mapkit.CoordinateRegion(
-                new mapkit.Coordinate(<%= result["coordinate"]["latitude"] %>, <%= result["coordinate"]["longitude"] %>),
-                new mapkit.CoordinateSpan(0.167647972, 0.354985255)
-            );
-
-            // Create a map in the element whose ID is "map"
-            const map = new mapkit.Map("map");
-            map.region = location;
-        };
-
-        main();
+        // Create a map in the element whose ID is "map"
+        const map = new mapkit.Map("map");
+        map.region = region;
     </script>
 <% end %>
